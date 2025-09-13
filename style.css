@@ -152,6 +152,7 @@ small.helper {
     font-size: 20px;
     color: var(--text-dark);
     margin-top: 10px;
+    margin-left: 20px;
     min-height: 72px
 }
 
