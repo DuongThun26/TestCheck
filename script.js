@@ -10,6 +10,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const finalMessage = document.getElementById("finalMessage");
   const letter = confess.querySelector("div"); // lá thư 💌
 
+  const bgMusic = document.getElementById("bgMusic"); // audio trong HTML
+
   let noScale = 1;
   let yesScale = 1;
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -31,12 +33,18 @@ document.addEventListener("DOMContentLoaded", () => {
     noBtn.style.top = y + "px";
   });
 
-  // Nút Đồng ý → ẩn left/right, hiện confess
+  // Nút Đồng ý → ẩn left/right, hiện confess + bật nhạc
   yesBtn.addEventListener("click", () => {
     left.style.display = "none";
     right.style.display = "none";
     confess.style.display = "flex";
     startHearts();
+
+    // bật nhạc (browser không chặn nữa vì đã có interaction)
+    if (bgMusic) {
+      bgMusic.muted = false;
+      bgMusic.play().catch(err => console.log("Không thể phát nhạc:", err));
+    }
 
     // chạy hiệu ứng gõ chữ ngay khi hiện confess
     typeText(
@@ -46,22 +54,30 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   });
 
-
   // Restart
-  restart.addEventListener("click", () => {
-    noScale = 1;
-    yesScale = 1;
-    noBtn.style.transform = `scale(${noScale})`;
-    yesBtn.style.transform = `scale(${yesScale})`;
-    noBtn.style.left = "18%";
-    yesBtn.style.left = "60%";
+  if (restart) {
+    restart.addEventListener("click", () => {
+      noScale = 1;
+      yesScale = 1;
+      noBtn.style.transform = `scale(${noScale})`;
+      yesBtn.style.transform = `scale(${yesScale})`;
+      noBtn.style.left = "18%";
+      yesBtn.style.left = "60%";
 
-    left.style.display = "block";
-    right.style.display = "block";
-    confess.style.display = "none";
+      left.style.display = "block";
+      right.style.display = "block";
+      confess.style.display = "none";
 
-    finalMessage.textContent = ""; // reset text
-  });
+      finalMessage.textContent = ""; // reset text
+
+      // tắt nhạc khi restart (tùy bạn muốn dừng hay để tiếp tục)
+      if (bgMusic) {
+        bgMusic.pause();
+        bgMusic.currentTime = 0;
+        bgMusic.muted = true;
+      }
+    });
+  }
 
   // Hàm gõ chữ
   function typeText(element, text, speed) {
